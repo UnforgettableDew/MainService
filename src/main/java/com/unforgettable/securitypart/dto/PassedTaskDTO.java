@@ -3,6 +3,7 @@ package com.unforgettable.securitypart.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.unforgettable.securitypart.entity.PassedTask;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,7 +29,12 @@ public class PassedTaskDTO {
     private Boolean isAssessed;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String comment;
+    @JsonProperty("educator_comment")
+    private String educatorComment;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("student_comment")
+    private String studentComment;
 
     @JsonProperty("submission_date")
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -50,6 +56,8 @@ public class PassedTaskDTO {
         this.submissionDate = passedTask.getSubmissionDate();
         this.isAssessed = passedTask.getIsAssessed();
         this.course = passedTask.getTask().getCourse().getTitle();
+        this.educatorComment = passedTask.getEducatorComment();
+        this.studentComment = passedTask.getStudentComment();
     }
 
     public PassedTaskDTO(Long id, Float point, Boolean isAssessed) {
@@ -70,14 +78,16 @@ public class PassedTaskDTO {
                          String githubReference,
                          Float point,
                          Boolean isAssessed,
-                         String comment,
+                         String educatorComment,
+                         String studentComment,
                          Timestamp submissionDate) {
         this.id = id;
         this.reference = reference;
         this.githubReference = githubReference;
         this.point = point;
         this.isAssessed = isAssessed;
-        this.comment = comment;
+        this.educatorComment = educatorComment;
+        this.studentComment = studentComment;
         this.submissionDate = submissionDate;
     }
 

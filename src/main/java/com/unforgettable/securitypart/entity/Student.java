@@ -43,12 +43,16 @@ public class Student {
     @JsonProperty(value = "telegram_contact")
     private String telegramContact;
 
+    @Column(name = "github_access_token")
+    @JsonProperty(value = "github_access_token")
+    private String githubAccessToken;
+
     @OneToMany(mappedBy = "student")
     @JsonManagedReference
     @JsonIgnore
     private List<PassedTask> passedTasks;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "course_student",
             joinColumns = @JoinColumn(name = "student_id"),
             inverseJoinColumns = @JoinColumn(name = "course_id"))
@@ -74,11 +78,17 @@ public class Student {
     }
 
     public void updateStudent(Student student) {
-        this.firstname = student.getFirstname();
-        this.lastname = student.getLastname();
-        this.email = student.getEmail();
-        this.group = student.getGroup();
-        this.telegramContact = student.getTelegramContact();
-        this.age = student.getAge();
+        if (student.getFirstname() != null)
+            this.firstname = student.getFirstname();
+        if (student.getLastname() != null)
+            this.lastname = student.getLastname();
+        if (student.getEmail() != null)
+            this.email = student.getEmail();
+        if (student.getGroup() != null)
+            this.group = student.getGroup();
+        if (student.getTelegramContact() != null)
+            this.telegramContact = student.getTelegramContact();
+        if (student.getAge() != null)
+            this.age = student.getAge();
     }
 }

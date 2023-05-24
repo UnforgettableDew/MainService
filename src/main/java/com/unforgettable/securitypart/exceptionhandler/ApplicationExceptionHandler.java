@@ -1,7 +1,7 @@
 package com.unforgettable.securitypart.exceptionhandler;
 
 import com.unforgettable.securitypart.exception.*;
-import com.unforgettable.securitypart.model.ExceptionResponse;
+import com.unforgettable.securitypart.model.response.ExceptionResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

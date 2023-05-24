@@ -10,8 +10,11 @@ spring:
       client:
         registration:
           github:
-            client-id: 728f23b7c6b6affc6049
-            client-secret: ab69ec06c6cf0855850f6e194e23b0172d0090a8
+            client-id: 3219768e82c19c3432e8
+            client-secret: 4df289849e4a6709e69f9fb067b88892da20cd3e
+            redirect-uri: 'http://localhost:8080/api/v1/auth/github/callback'
+            scope:
+              - repo
   datasource:
     username: 'unforgettable'
     password: '27092100'

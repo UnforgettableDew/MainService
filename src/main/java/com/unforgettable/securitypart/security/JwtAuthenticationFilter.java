@@ -1,6 +1,6 @@
 package com.unforgettable.securitypart.security;
 
-import com.unforgettable.securitypart.model.BaseFilterExceptionResponse;
+import com.unforgettable.securitypart.model.request.BaseFilterExceptionResponse;
 import com.unforgettable.securitypart.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Enumeration;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 

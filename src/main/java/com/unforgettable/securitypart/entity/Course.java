@@ -53,9 +53,24 @@ public class Course {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Student> students;
 
+    @OneToMany(mappedBy = "course")
+    @JsonIgnore
+    private List<TypicalMistake> typicalMistakes;
+
     public Course(Long id, String title, String description) {
         this.id = id;
         this.title = title;
         this.description = description;
+    }
+
+    public void updateCourse(Course course) {
+        if (course.getTitle() != null)
+            this.title = course.getTitle();
+        if (course.getDescription() != null)
+            this.description = course.getDescription();
+        if (course.getStartDate() != null)
+            this.startDate = course.getStartDate();
+        if (course.getEndDate() != null)
+            this.endDate = course.getEndDate();
     }
 }

@@ -1,4 +1,4 @@
-package com.unforgettable.securitypart.model;
+package com.unforgettable.securitypart.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

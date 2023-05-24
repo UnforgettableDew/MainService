@@ -1,4 +1,4 @@
-package com.unforgettable.securitypart.model;
+package com.unforgettable.securitypart.model.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

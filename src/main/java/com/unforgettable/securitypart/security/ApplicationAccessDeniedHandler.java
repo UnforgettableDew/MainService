@@ -1,6 +1,6 @@
 package com.unforgettable.securitypart.security;
 
-import com.unforgettable.securitypart.model.BaseFilterExceptionResponse;
+import com.unforgettable.securitypart.model.request.BaseFilterExceptionResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;

@@ -1,4 +1,4 @@
-package com.unforgettable.securitypart.model;
+package com.unforgettable.securitypart.model.response;
 
 import lombok.*;
 import org.springframework.http.HttpStatus;

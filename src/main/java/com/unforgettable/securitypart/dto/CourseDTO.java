@@ -51,4 +51,12 @@ public class CourseDTO {
         this.endDate = course.getEndDate();
 //        this.studentsCount = studentsCount;
     }
+
+    public CourseDTO(Long id, String title, String description, Timestamp startDate, Timestamp endDate) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 }

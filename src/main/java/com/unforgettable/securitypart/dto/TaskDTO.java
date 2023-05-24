@@ -19,19 +19,16 @@ import java.util.List;
 public class TaskDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long id;
-
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String title;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String description;
     @JsonProperty("max_point")
     private Float maxPoint;
-
     @JsonProperty("start_date")
     @JsonInclude(JsonInclude.Include.NON_NULL)
 
     private Timestamp startDate;
-
     @JsonProperty("end_date")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Timestamp endDate;
@@ -57,5 +54,19 @@ public class TaskDTO {
         this.id = id;
         this.title = title;
         this.maxPoint = maxPoint;
+    }
+
+    public TaskDTO(Long id,
+                   String title,
+                   String description,
+                   Float maxPoint,
+                   Timestamp startDate,
+                   Timestamp endDate) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.maxPoint = maxPoint;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 }

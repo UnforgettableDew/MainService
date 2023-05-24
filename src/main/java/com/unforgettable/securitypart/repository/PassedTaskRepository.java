@@ -16,11 +16,17 @@ public interface PassedTaskRepository extends JpaRepository<PassedTask, Long> {
     List<PassedTaskDTO> findPassedTasksByStudentIdAndCourseId(Long studentId, Long courseId);
 
     @Query("select new com.unforgettable.securitypart.dto.PassedTaskDTO(" +
-            "lw.id, lw.reference, lw.githubReference, lw.point, lw.isAssessed, lw.comment, lw.submissionDate) from PassedTask lw " +
-            "where lw.student.id=:studentId and lw.task.course.id=:courseId and lw.id=:passedTaskId")
-    PassedTaskDTO findPassedTasksByStudentIdAndCourseIdAndLWId(Long studentId,
-                                                               Long courseId,
-                                                               Long passedTaskId);
+            "lw.id, lw.point, lw.isAssessed) from PassedTask lw " +
+            "where lw.student.id=:studentId and lw.task.course.id=:courseId and lw.task.id=:taskId")
+    List<PassedTaskDTO> findPassedTasksByStudentIdCourseIdTaskId(Long studentId, Long courseId, Long taskId);
+    @Query("select new com.unforgettable.securitypart.dto.PassedTaskDTO(" +
+            "lw.id, lw.reference, lw.githubReference, lw.point, lw.isAssessed," +
+            " lw.educatorComment,lw.studentComment, lw.submissionDate) from PassedTask lw " +
+            "where lw.student.id=:studentId and lw.task.course.id=:courseId and lw.task.id=:taskId")
+    PassedTaskDTO findPassedTasksByStudentIdAndCourseIdAndTaskId(Long studentId,
+                                                                 Long courseId,
+                                                                 Long taskId);
+    PassedTask findPassedTaskByTaskIdAndStudentId(Long taskId, Long studentId);
     @Query("select new com.unforgettable.securitypart.dto.PassedTaskDTO(" +
             "lw.id, lw.point, lw.isAssessed) from PassedTask lw " +
             "join lw.task t where lw.student.id=:studentId and t.id=:taskId and t.course.id=:courseId")
@@ -45,12 +51,17 @@ public interface PassedTaskRepository extends JpaRepository<PassedTask, Long> {
     Float avgScoreForLWByCourseAndTask(Long courseId, Long taskId);
 
     @Query("select lw.githubReference from PassedTask lw " +
-            "where lw.id=:labId and lw.task.course.id=:courseId")
-    String findGithubReferenceByPassedTaskId(Long labId, Long courseId);
+            "where lw.id=:labId and lw.task.course.id=:courseId and lw.student.id=:studentId")
+    String findGithubReferenceByPassedTaskIdCourseIdStudentId(Long labId, Long courseId, Long studentId);
 
     @Query("select lw.reference from PassedTask lw " +
-            "where lw.student.id=:studentId and lw.task.course.id=:courseId and lw.id=:LWId")
-    String findPassedTaskTitleByStudentIdAndCourseIdAndPassedTaskId(Long studentId,
-                                                                    Long courseId,
-                                                                    Long LWId);
+            "where lw.student.id=:studentId and lw.task.course.id=:courseId and lw.task.id=:taskId")
+    String findReferenceByStudentIdAndCourseIdAndTaskId(Long studentId,
+                                                        Long courseId,
+                                                        Long taskId);
+    @Query("select lw from PassedTask lw " +
+            "where lw.student.id=:studentId and lw.task.course.id=:courseId and lw.task.id=:taskId")
+    PassedTask findByCourseIdStudentIdTaskId(Long courseId,
+                                             Long studentId,
+                                             Long taskId);
 }

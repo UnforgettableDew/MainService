@@ -37,8 +37,12 @@ public class PassedTask {
     @Column(name = "is_assessed")
     private Boolean isAssessed;
 
-    @Column(name = "comment")
-    private String comment;
+    @Column(name = "educator_comment")
+    @JsonProperty("educator_comment")
+    private String educatorComment;
+    @Column(name = "student_comment")
+    @JsonProperty("student_comment")
+    private String studentComment;
 
     @Column(name = "submission_date")
     private Timestamp submissionDate;
@@ -54,4 +58,17 @@ public class PassedTask {
     @JsonManagedReference
     @JsonIgnore
     private Task task;
+
+    public void updatePassedTaskStudent(PassedTask passedTask) {
+        if (passedTask.getStudentComment() != null)
+            this.studentComment = passedTask.getStudentComment();
+        if (passedTask.getGithubReference() != null)
+            this.githubReference = passedTask.getGithubReference();
+    }
+    public void updatePassedTaskEducator(PassedTask passedTask) {
+        if (passedTask.getEducatorComment() != null)
+            this.educatorComment = passedTask.getEducatorComment();
+        if (passedTask.getPoint() != null)
+            this.point = passedTask.getPoint();
+    }
 }

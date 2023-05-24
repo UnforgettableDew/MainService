@@ -1,6 +1,7 @@
 package com.unforgettable.securitypart.service;
 
 import com.unforgettable.securitypart.entity.UserEntity;
+import com.unforgettable.securitypart.enums.UserRole;
 import com.unforgettable.securitypart.repository.ApplicationUserRepository;
 import com.unforgettable.securitypart.repository.EducatorRepository;
 import com.unforgettable.securitypart.repository.StudentRepository;
@@ -105,8 +106,8 @@ public class JwtService {
     public UserEntity getUserByJwt(HttpServletRequest request){
         String jwtToken = request.getHeader(HttpHeaders.AUTHORIZATION).substring(7);
         String username = extractUsername(jwtToken);
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User with username=" + username + " not found"));
+        return userRepository.findByUsername(username);
+//                .orElseThrow(() -> new UsernameNotFoundException("User with username=" + username + " not found"));
     }
 
     public Long getUserIdByJwt(String jwt){
@@ -131,5 +132,10 @@ public class JwtService {
         String jwtToken = request.getHeader(HttpHeaders.AUTHORIZATION).substring(7);
         Long userId = getUserIdByJwt(jwtToken);
         return educatorRepository.findEducatorIdByUserId(userId);
+    }
+
+    public String getUserRole(HttpServletRequest request){
+        UserEntity user = getUserByJwt(request);
+        return user.getRole().name().toLowerCase();
     }
 }

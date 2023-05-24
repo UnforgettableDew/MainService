@@ -39,6 +39,10 @@ public class Educator {
     @JsonProperty(value = "telegram_contact")
     private String telegramContact;
 
+    @Column(name = "github_access_token")
+    @JsonProperty(value = "github_access_token")
+    private String githubAccessToken;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", unique = true)
     @JsonIgnore
@@ -54,11 +58,16 @@ public class Educator {
     }
 
     public void updateEducator(Educator educator) {
-        this.firstname = educator.getFirstname();
-        this.lastname = educator.getLastname();
-        this.age = educator.getAge();
-        this.email = educator.getEmail();
-        this.telegramContact = educator.getTelegramContact();
+        if (educator.getFirstname() != null)
+            this.firstname = educator.getFirstname();
+        if (educator.getLastname() != null)
+            this.lastname = educator.getLastname();
+        if (educator.getAge() != null)
+            this.age = educator.getAge();
+        if (educator.getEmail() != null)
+            this.email = educator.getEmail();
+        if (educator.getTelegramContact() != null)
+            this.telegramContact = educator.getTelegramContact();
     }
 
 }

@@ -23,6 +23,7 @@ create table educator
     age              int,
     email            varchar(64),
     telegram_contact varchar(64),
+    github_access_token varchar(128),
     user_id          bigint unique,
     foreign key (user_id) references users (id)
         on delete cascade
@@ -48,6 +49,7 @@ create table task
     reference   varchar(255),
     title       varchar(64),
     description varchar(255),
+    github_reference varchar(128),
     max_point   float,
     course_id   bigint,
     start_date  timestamp,
@@ -66,6 +68,7 @@ create table student
     email             varchar(64),
     telegram_contact  varchar(64),
     student_group     varchar(64),
+    github_access_token varchar(128),
     user_id           bigint unique,
     registration_date timestamp,
     foreign key (user_id) references users (id)
@@ -80,8 +83,9 @@ create table passed_task
     github_reference varchar(128),
     point            float,
     is_assessed      boolean,
-    comment          varchar(255),
-    submission_date timestamp,
+    educator_comment  varchar(255),
+    student_comment varchar(255),
+    submission_date  timestamp,
     student_id       bigint,
     task_id          bigint,
     foreign key (task_id) references task (id)
@@ -112,6 +116,6 @@ create table course_student
         on delete cascade
         on update cascade,
     foreign key (course_id) references course (id)
-        on delete cascade
+        on delete no action
         on update cascade
 )

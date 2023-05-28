@@ -30,4 +30,10 @@ public interface GithubFeign {
 
     @GetMapping("/auth/github/callback")
     Map<String, String> handleGitHubCallback(@RequestParam("code") String code);
+
+    @PostMapping("/github/user/{username}/repo/{repositoryName}/files")
+    List<Object> getFiles(@RequestParam("access_token") String accessToken,
+                          @PathVariable String username,
+                          @PathVariable String repositoryName,
+                          @RequestBody List<String> filenames);
 }

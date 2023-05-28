@@ -14,6 +14,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -278,6 +279,14 @@ public class EducatorController {
         return new ResponseEntity<>(educatorService.createRepo(request,courseId, taskId, repo), OK);
     }
 
+    @PostMapping("/course/{courseId}/task/{taskId}/file-to-check/add")
+    public ResponseEntity<FileToCheck> addFileToCheck(HttpServletRequest request,
+                                                      @PathVariable Long courseId,
+                                                      @PathVariable Long taskId,
+                                                      @RequestBody FileToCheck fileToCheck){
+        return new ResponseEntity<>(educatorService.addFileToCheck(request, courseId, taskId, fileToCheck), CREATED);
+    }
+
     @GetMapping("/github/provide-access")
     public ResponseEntity<Map<String, String>> provideAccessToken(HttpServletRequest request) {
         return new ResponseEntity<>(educatorService.provideAccessToGithub(request), OK);
@@ -287,5 +296,13 @@ public class EducatorController {
     public ResponseEntity<CommonResponse> saveGithubAccessToken(HttpServletRequest request,
                                                                 @RequestBody GithubAccessToken githubAccessToken){
         return new ResponseEntity<>(educatorService.saveAccessToken(request,githubAccessToken), OK);
+    }
+
+    @GetMapping("/course/{courseId}/student/{studentId}/task/{taskId}/check-files")
+    public ResponseEntity<List<Object>> checkFilesExistence(HttpServletRequest request,
+                                                            @PathVariable Long courseId,
+                                                            @PathVariable Long studentId,
+                                                            @PathVariable Long taskId){
+        return new ResponseEntity<>(educatorService.checkFilesExistence(request, courseId, studentId, taskId), OK);
     }
 }

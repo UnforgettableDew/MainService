@@ -108,6 +108,16 @@ create table typical_mistake
         on update cascade
 );
 
+create table file_to_check
+(
+    id             bigserial primary key,
+    filename varchar(64),
+    task_id      bigint,
+    foreign key (task_id) references task (id)
+        on delete cascade
+        on update cascade
+);
+
 create table course_student
 (
     student_id bigint,

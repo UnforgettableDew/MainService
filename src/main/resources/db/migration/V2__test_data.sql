@@ -200,6 +200,12 @@ values ('typical mistake 1', 'description 1 course 1', 2, 1),
        ('typical mistake 2', 'description 2 course 3', 3, 3),
        ('typical mistake 3', 'description 3 course 3', 3, 3);
 
+insert into file_to_check(filename, task_id)
+values ('.gitignore',1),
+       ('README.md', 1),
+       ('SecurityPartApplication.java', 1),
+       ('UserEntity.java', 1);
+
 insert into course_student(student_id, course_id)
 values (1, 1),
        (2, 1),

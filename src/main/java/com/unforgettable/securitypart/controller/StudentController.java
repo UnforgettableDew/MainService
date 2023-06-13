@@ -2,9 +2,7 @@ package com.unforgettable.securitypart.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.unforgettable.securitypart.dto.*;
-import com.unforgettable.securitypart.entity.PassedTask;
-import com.unforgettable.securitypart.entity.Student;
-import com.unforgettable.securitypart.entity.Task;
+import com.unforgettable.securitypart.entity.*;
 import com.unforgettable.securitypart.model.request.GithubAccessToken;
 import com.unforgettable.securitypart.model.response.CommonResponse;
 import com.unforgettable.securitypart.service.StudentService;
@@ -55,6 +53,12 @@ public class StudentController {
     @GetMapping("/profile")
     public ResponseEntity<StudentDTO> getProfile(HttpServletRequest request) {
         return new ResponseEntity<>(studentService.getProfile(request), OK);
+    }
+
+    @GetMapping("/course/{courseId}/educator-profile")
+    public ResponseEntity<EducatorDTO> getEducator(HttpServletRequest request,
+                                                @PathVariable Long courseId) {
+        return new ResponseEntity<>(studentService.getEducatorProfile(request, courseId),OK);
     }
 
     @GetMapping("/course/{courseId}/typical-mistakes")
@@ -161,6 +165,13 @@ public class StudentController {
         return new ResponseEntity<>(studentService.deletePassedTask(request, courseId, taskId), OK);
     }
 
+    @DeleteMapping("/courses/{courseId}/task/{taskId}/file/delete")
+    public ResponseEntity<CommonResponse> deletePassedTaskFile(HttpServletRequest request,
+                                                           @PathVariable Long courseId,
+                                                           @PathVariable Long taskId) {
+        return new ResponseEntity<>(studentService.deletePassedTaskFile(request, courseId, taskId), OK);
+    }
+
     @PutMapping("/profile/edit")
     public ResponseEntity<CommonResponse> editProfile(HttpServletRequest request,
                                                       @RequestBody Student student) {
@@ -187,9 +198,16 @@ public class StudentController {
         return new ResponseEntity<>(studentService.provideAccessToGithub(request), OK);
     }
 
-    @PutMapping("/github/save-access-token")
+    @GetMapping("/course/{courseId}/task/{taskId}/files-to-check")
+    public ResponseEntity<List<FileToCheck>> getFilesToCheck(HttpServletRequest request,
+                                                             @PathVariable Long courseId,
+                                                             @PathVariable Long taskId){
+        return new ResponseEntity<>(studentService.getFileToCheck(request, courseId, taskId), OK);
+    }
+
+    @PostMapping("/github/save-access-token")
     public ResponseEntity<CommonResponse> saveGithubAccessToken(HttpServletRequest request,
-                                                                @RequestBody GithubAccessToken githubAccessToken){
-        return new ResponseEntity<>(studentService.saveAccessToken(request,githubAccessToken), OK);
+                                                                @RequestBody GithubAccessToken githubAccessToken) {
+        return new ResponseEntity<>(studentService.saveAccessToken(request, githubAccessToken), OK);
     }
 }

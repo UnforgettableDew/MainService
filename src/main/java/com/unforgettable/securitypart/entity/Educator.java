@@ -1,6 +1,7 @@
 package com.unforgettable.securitypart.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -9,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.sql.Date;
 import java.util.List;
 
 @Entity
@@ -32,8 +34,8 @@ public class Educator {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "age")
-    private Integer age;
+    @Column(name = "birthday")
+    private Date birthday;
 
     @Column(name = "telegram_contact")
     @JsonProperty(value = "telegram_contact")
@@ -41,6 +43,7 @@ public class Educator {
 
     @Column(name = "github_access_token")
     @JsonProperty(value = "github_access_token")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String githubAccessToken;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -62,12 +65,19 @@ public class Educator {
             this.firstname = educator.getFirstname();
         if (educator.getLastname() != null)
             this.lastname = educator.getLastname();
-        if (educator.getAge() != null)
-            this.age = educator.getAge();
+        if (educator.getBirthday() != null)
+            this.birthday = educator.getBirthday();
         if (educator.getEmail() != null)
             this.email = educator.getEmail();
         if (educator.getTelegramContact() != null)
             this.telegramContact = educator.getTelegramContact();
     }
 
+    public Educator(String firstname, String lastname, String email, Date birthday, String telegramContact) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.birthday = birthday;
+        this.telegramContact = telegramContact;
+    }
 }

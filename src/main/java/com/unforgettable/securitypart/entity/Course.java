@@ -29,9 +29,11 @@ public class Course {
     private String description;
 
     @Column(name = "start_date")
+    @JsonProperty(value = "start_date")
     private Timestamp startDate;
 
     @Column(name = "end_date")
+    @JsonProperty(value = "end_date")
     private Timestamp endDate;
 
     @ManyToOne

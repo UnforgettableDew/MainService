@@ -45,6 +45,7 @@ public class Task {
     private Timestamp endDate;
 
     @Column(name = "github_reference")
+    @JsonIgnore
     private String githubReference;
     @ManyToOne
     @JoinColumn(name = "course_id")
@@ -53,8 +54,6 @@ public class Task {
     private Course course;
 
     @OneToMany(mappedBy = "task")
-    @JsonManagedReference
-    @JsonIgnore
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<FileToCheck> filesToCheck;
 
@@ -76,5 +75,7 @@ public class Task {
             this.startDate = task.getStartDate();
         if (task.getEndDate() != null)
             this.endDate = task.getEndDate();
+        if (task.getMaxPoint() != null)
+            this.maxPoint = task.getMaxPoint();
     }
 }

@@ -12,5 +12,6 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class AssessRequest {
     private Float point;
+    @JsonProperty("educator_comment")
     private String comment;
 }

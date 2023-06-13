@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
@@ -260,7 +261,26 @@ public class StudentService {
         if (passedTask == null)
             throw new NoPassedTaskException("No such passed task with id = " + taskId
                     + " on course with id = " + courseId);
+        File file = new File(passedTask.getReference());
+        if (file.exists())
+            file.delete();
         passedTaskRepository.delete(passedTask);
+        return new CommonResponse(true);
+    }
+
+    public CommonResponse deletePassedTaskFile(HttpServletRequest request,
+                                               Long courseId, Long taskId) {
+        Long studentId = educationUtils.getStudentId(request, courseId);
+        PassedTask passedTask = passedTaskRepository.
+                findByCourseIdStudentIdTaskId(courseId, studentId, taskId);
+        if (passedTask == null)
+            throw new NoPassedTaskException("No such passed task with id = " + taskId
+                    + " on course with id = " + courseId);
+        File file = new File(passedTask.getReference());
+        if (file.exists())
+            file.delete();
+        passedTask.setReference(null);
+        passedTaskRepository.save(passedTask);
         return new CommonResponse(true);
     }
 
@@ -293,14 +313,23 @@ public class StudentService {
         Student student = studentRepository.findById(studentId).get();
         PassedTask passedTask = passedTaskRepository.findByCourseIdStudentIdTaskId(courseId, studentId, taskId);
         Map<String, String> githubReference = (Map<String, String>) githubFeign.createRepo(student.getGithubAccessToken(), repo);
+        if (passedTask != null) {
+            passedTask.setGithubReference(githubReference.get("html_url"));
 
-        passedTask.setGithubReference(githubReference.get("html_url"));
+            passedTaskRepository.save(passedTask);
+            return githubReference;
+        } else {
+            PassedTask newPassedTask = new PassedTask();
+            newPassedTask.setGithubReference(githubReference.get("html_url"));
+            newPassedTask.setStudent(student);
+            newPassedTask.setTask(taskRepository.findById(taskId).get());
 
-        passedTaskRepository.save(passedTask);
-        return githubReference;
+            passedTaskRepository.save(newPassedTask);
+            return githubReference;
+        }
     }
 
-    public Object importRepo(HttpServletRequest request, Long courseId, Long taskId){
+    public Object importRepo(HttpServletRequest request, Long courseId, Long taskId) {
         Long studentId = educationUtils.getStudentId(request, courseId);
         Student student = studentRepository.findById(studentId).get();
         Task task = taskRepository.findById(taskId).get();
@@ -319,7 +348,7 @@ public class StudentService {
         return githubHtmlReference;
     }
 
-    public Map<String, String> provideAccessToGithub(HttpServletRequest request){
+    public Map<String, String> provideAccessToGithub(HttpServletRequest request) {
         Long studentId = jwtService.getStudentId(request);
         String url = "http://25.59.188.46:8081/api/v1/oauth2/authorize";
         Map<String, String> oauth2url = new HashMap<>();
@@ -327,11 +356,23 @@ public class StudentService {
         return oauth2url;
     }
 
-    public CommonResponse saveAccessToken(HttpServletRequest request, GithubAccessToken githubAccessToken){
+    public CommonResponse saveAccessToken(HttpServletRequest request, GithubAccessToken githubAccessToken) {
         Long studentId = jwtService.getStudentId(request);
         Student student = studentRepository.findById(studentId).get();
         student.setGithubAccessToken(githubAccessToken.getGithubAccessToken());
         studentRepository.save(student);
         return new CommonResponse(true);
+    }
+
+    public EducatorDTO getEducatorProfile(HttpServletRequest request, Long courseId) {
+        Long studentId = educationUtils.getStudentId(request, courseId);
+        return educatorRepository.findEducatorPersonal(courseId);
+    }
+
+    public List<FileToCheck> getFileToCheck(HttpServletRequest request, Long courseId,
+                                            Long taskId) {
+        Long studentId = educationUtils.getStudentId(request, courseId);
+        Task task = taskRepository.findById(taskId).get();
+        return task.getFilesToCheck();
     }
 }

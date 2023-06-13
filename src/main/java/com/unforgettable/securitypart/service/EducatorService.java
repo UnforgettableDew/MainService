@@ -9,6 +9,7 @@ import com.unforgettable.securitypart.feign.GithubFeign;
 import com.unforgettable.securitypart.model.request.AssessRequest;
 import com.unforgettable.securitypart.model.request.GithubAccessToken;
 import com.unforgettable.securitypart.model.response.CommonResponse;
+import com.unforgettable.securitypart.model.response.GitHubCommitsResponse;
 import com.unforgettable.securitypart.repository.*;
 import com.unforgettable.securitypart.utils.EducationUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
@@ -157,13 +159,31 @@ public class EducatorService {
         return students;
     }
 
+    public List<StudentDTO> getStudentsWhoHaveNotPassedTask(HttpServletRequest request,
+                                                            Long courseId, Long taskId){
+        List<StudentDTO> allStudents = getListOfStudentsByCourse(request, courseId);
+        List<StudentDTO> studentsWhoPassedTask = getStudentsWhoPassedTask(request, courseId, taskId);
+
+        Iterator<StudentDTO> iterator = allStudents.iterator();
+        while (iterator.hasNext()) {
+            StudentDTO allStudent = iterator.next();
+            for (StudentDTO studentWhoPassedTask : studentsWhoPassedTask) {
+                if (allStudent.getId().equals(studentWhoPassedTask.getId())) {
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
+        return allStudents;
+    }
+
     public TaskDTO getTaskByCourse(HttpServletRequest request,
                                    Long courseId, Long taskId) {
         Long educatorId = educationUtils.getEducatorId(request, courseId);
         return taskRepository.findFullTaskInfoById(taskId);
     }
 
-    public PassedTaskDTO getPassedTaskByCourseAndStudent(HttpServletRequest request,
+    public Map<String, Object> getPassedTaskByCourseAndStudent(HttpServletRequest request,
                                                          Long courseId,
                                                          Long studentId,
                                                          Long passedTaskId) {
@@ -171,8 +191,10 @@ public class EducatorService {
 
         List<Long> studentCourseIdList = studentRepository.findStudentsIdByCourse(courseId);
 //
+        Map<String, Object> result = new HashMap<>();
         for (Long studentCourseId : studentCourseIdList) {
             if (studentCourseId.equals(studentId)) {
+                result.put("student", studentRepository.findStudentBriefInfo(studentId));
                 PassedTaskDTO passedTask = passedTaskRepository
                         .findPassedTasksByStudentIdAndCourseIdAndTaskId(
                                 studentId,
@@ -182,7 +204,8 @@ public class EducatorService {
                     throw new NoPassedTaskException("No such passed task with task id = " + passedTaskId
                             + " on course with id = " + courseId + " and student id = " + studentId);
                 passedTask.setTask(taskRepository.findFullTaskInfoById(passedTaskId));
-                return passedTask;
+                result.put("passed_task", passedTask);
+                return result;
             }
         }
         throw new NoSuchStudentOnCourseException("There is no student with id = " + studentId +
@@ -227,30 +250,37 @@ public class EducatorService {
                             findTaskByPassedTaskId(passedTaskDTO.getId())));
             student.setPassedTasks(passedTasks);
         }
-
         return students;
     }
 
-    public List<Object> getCommitList(HttpServletRequest request,
-                                      Long courseId, Long studentId,
-                                      Long passedTaskId) {
+    public GitHubCommitsResponse getCommitList(HttpServletRequest request,
+                                               Long courseId, Long studentId,
+                                               Long taskId) {
         Long educatorId = educationUtils.getEducatorId(request, courseId);
 
-//        List<Long> studentCourseIdList = studentRepository.findStudentsIdByCourse(courseId);
-//
-//        for (Long studentCourseId : studentCourseIdList) {
-//            if (studentCourseId.equals(studentId)) {
-        String githubReference = passedTaskRepository.findGithubReferenceByPassedTaskIdCourseIdStudentId(passedTaskId, courseId, studentId);
-        if (githubReference == null)
-            throw new NoPassedTaskException("No such passed task with id = " + passedTaskId
+
+        PassedTask passedTask = passedTaskRepository.findByCourseIdStudentIdTaskId(courseId, studentId, taskId);
+        if (passedTask == null)
+            throw new NoPassedTaskException("No such passed task with id = " + taskId
                     + " on course with id = " + courseId);
+        String githubReference = passedTask.getGithubReference();
         String[] parts = githubReference.split("/");
         String username = parts[parts.length - 2];
         String repo = parts[parts.length - 1];
-        return githubFeign.getAllCommits(username, repo);
-//            }
-//        }
-//        return null;
+        return new GitHubCommitsResponse(githubReference, passedTask.getTask().getTitle(), githubFeign.getAllCommits(username, repo));
+    }
+
+    public List<GitHubCommitsResponse> getAllStudentCommits(HttpServletRequest request, Long courseId, Long studentId) {
+        Long educatorId = educationUtils.getEducatorId(request, courseId);
+        Student student = studentRepository.findById(studentId).get();
+        List<PassedTask> passedTasks = student.getPassedTasks();
+        List<GitHubCommitsResponse> result = new ArrayList<>();
+        for (PassedTask passedTask : passedTasks) {
+            if (passedTask.getTask().getCourse().getId().equals(courseId)) {
+                result.add(getCommitList(request, courseId, studentId, passedTask.getTask().getId()));
+            }
+        }
+        return result;
     }
 
     public Course createCourse(HttpServletRequest request, Course course) {
@@ -427,11 +457,27 @@ public class EducatorService {
         return new CommonResponse(true);
     }
 
+    public CommonResponse deleteTaskFile(HttpServletRequest request,
+                                     Long courseId,
+                                     Long taskId) {
+        Long educatorId = educationUtils.getEducatorId(request, courseId);
+        Task task = taskRepository.findById(taskId).get();
+        File file = new File(task.getReference());
+        if (file.exists())
+            file.delete();
+        task.setReference(null);
+        taskRepository.save(task);
+        return new CommonResponse(true);
+    }
+
     public CommonResponse deleteTask(HttpServletRequest request,
                                      Long courseId,
                                      Long taskId) {
         Long educatorId = educationUtils.getEducatorId(request, courseId);
-
+        Task task = taskRepository.findById(taskId).get();
+        File file = new File(task.getReference());
+        if (file.exists())
+            file.delete();
         taskRepository.deleteById(taskId);
         return new CommonResponse(true);
     }
@@ -582,12 +628,33 @@ public class EducatorService {
                 " on course with id = " + courseId);
     }
 
-    public FileToCheck addFileToCheck(HttpServletRequest request, Long courseId, Long taskId, FileToCheck file){
+    public List<FileToCheck> addFileToCheck(HttpServletRequest request, Long courseId, Long taskId, List<FileToCheck> files) {
         Long educatorId = educationUtils.getEducatorId(request, courseId);
         Task task = taskRepository.findById(taskId).get();
-        file.setTask(task);
-        fileToCheckRepository.save(file);
-        return file;
+        for (FileToCheck fileToCheck : files) {
+            fileToCheck.setTask(task);
+            fileToCheckRepository.save(fileToCheck);
+        }
+        return files;
+    }
+
+    public Task getTaskWithFilesToCheck(HttpServletRequest request, Long courseId, Long taskId) {
+        Long educatorId = educationUtils.getEducatorId(request, courseId);
+        return taskRepository.findById(taskId).get();
+    }
+
+    public CommonResponse deleteFileToCheck(HttpServletRequest request, Long courseId, Long taskId,
+                                            Long fileToCheckId) {
+        Long educatorId = educationUtils.getEducatorId(request, courseId);
+        fileToCheckRepository.deleteById(fileToCheckId);
+        return new CommonResponse(true);
+    }
+
+    public List<FileToCheck> getFileToCheck(HttpServletRequest request, Long courseId,
+                                            Long taskId){
+        Long educatorId = educationUtils.getEducatorId(request, courseId);
+        Task task = taskRepository.findById(taskId).get();
+        return task.getFilesToCheck();
     }
 }
 

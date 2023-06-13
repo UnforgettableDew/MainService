@@ -6,6 +6,7 @@ import com.unforgettable.securitypart.entity.*;
 import com.unforgettable.securitypart.model.request.AssessRequest;
 import com.unforgettable.securitypart.model.request.GithubAccessToken;
 import com.unforgettable.securitypart.model.response.CommonResponse;
+import com.unforgettable.securitypart.model.response.GitHubCommitsResponse;
 import com.unforgettable.securitypart.service.EducatorService;
 import com.unforgettable.securitypart.service.FileService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,7 +15,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -86,20 +86,34 @@ public class EducatorController {
         return new ResponseEntity<>(educatorService.getStudentsWhoPassedTask(request, courseId, taskId), OK);
     }
 
+    @GetMapping("/course/{courseId}/task/{taskId}/students-unpass")
+    public ResponseEntity<List<StudentDTO>> getStudentsWhoHaveNotPassedTask(HttpServletRequest request,
+                                                                            @PathVariable Long courseId,
+                                                                            @PathVariable Long taskId) {
+        return new ResponseEntity<>(educatorService.getStudentsWhoHaveNotPassedTask(request, courseId, taskId), OK);
+    }
+
     @GetMapping("/course/{courseId}/student/{studentId}/task/{taskId}")
-    public ResponseEntity<PassedTaskDTO> getStudentPassedTask(HttpServletRequest request,
-                                                              @PathVariable Long courseId,
-                                                              @PathVariable Long studentId,
-                                                              @PathVariable Long taskId) {
+    public ResponseEntity<Map<String, Object>> getStudentPassedTask(HttpServletRequest request,
+                                                                    @PathVariable Long courseId,
+                                                                    @PathVariable Long studentId,
+                                                                    @PathVariable Long taskId) {
         return new ResponseEntity<>(educatorService.
                 getPassedTaskByCourseAndStudent(request, courseId, studentId, taskId), OK);
     }
 
+//    @GetMapping("/course/{courseId}/task/{taskId}")
+//    public ResponseEntity<TaskDTO> getTaskByCourse(HttpServletRequest request,
+//                                                   @PathVariable Long courseId,
+//                                                   @PathVariable Long taskId) {
+//        return new ResponseEntity<>(educatorService.getTaskByCourse(request, courseId, taskId), OK);
+//    }
+
     @GetMapping("/course/{courseId}/task/{taskId}")
-    public ResponseEntity<TaskDTO> getTaskByCourse(HttpServletRequest request,
-                                                   @PathVariable Long courseId,
-                                                   @PathVariable Long taskId) {
-        return new ResponseEntity<>(educatorService.getTaskByCourse(request, courseId, taskId), OK);
+    public ResponseEntity<Task> getTaskByCourse(HttpServletRequest request,
+                                                @PathVariable Long courseId,
+                                                @PathVariable Long taskId) {
+        return new ResponseEntity<>(educatorService.getTaskWithFilesToCheck(request, courseId, taskId), OK);
     }
 
     @GetMapping("/course/{courseId}/tasks")
@@ -132,12 +146,19 @@ public class EducatorController {
         return new ResponseEntity<>(educatorService.getStudentsWithUncheckedPassedTasks(request, courseId), OK);
     }
 
-    @GetMapping("/course/{courseId}/student/{studentId}/task/{passedTaskId}/commits")
-    public ResponseEntity<List<Object>> getStudentPassedTaskCommits(HttpServletRequest request,
-                                                                    @PathVariable Long courseId,
-                                                                    @PathVariable Long studentId,
-                                                                    @PathVariable Long passedTaskId) {
-        return new ResponseEntity<>(educatorService.getCommitList(request, courseId, studentId, passedTaskId), OK);
+    @GetMapping("/course/{courseId}/student/{studentId}/task/{taskId}/commits")
+    public ResponseEntity<GitHubCommitsResponse> getStudentPassedTaskCommits(HttpServletRequest request,
+                                                                             @PathVariable Long courseId,
+                                                                             @PathVariable Long studentId,
+                                                                             @PathVariable Long taskId) {
+        return new ResponseEntity<>(educatorService.getCommitList(request, courseId, studentId, taskId), OK);
+    }
+
+    @GetMapping("/course/{courseId}/student/{studentId}/all-commits")
+    public ResponseEntity<List<GitHubCommitsResponse>> getStudentPassedTaskCommits(HttpServletRequest request,
+                                                                                   @PathVariable Long courseId,
+                                                                                   @PathVariable Long studentId) {
+        return new ResponseEntity<>(educatorService.getAllStudentCommits(request, courseId, studentId), OK);
     }
 
     @GetMapping("/course/{courseId}/student/{studentId}/task/{passedTaskId}/check-basic-files")
@@ -151,7 +172,7 @@ public class EducatorController {
     @GetMapping("/course/{courseId}/task/{taskId}/deadline-tasks")
     public ResponseEntity<List<StudentDTO>> getStudentsWhoDidntSubmitTaskOnTime(HttpServletRequest request,
                                                                                 @PathVariable Long courseId,
-                                                                                @PathVariable Long taskId){
+                                                                                @PathVariable Long taskId) {
         return new ResponseEntity<>(educatorService.getStudentsWhoDidntSubmitTaskOnTime(request, courseId, taskId), OK);
     }
 
@@ -219,6 +240,13 @@ public class EducatorController {
         return new ResponseEntity<>(educatorService.deleteTask(request, courseId, taskId), OK);
     }
 
+    @DeleteMapping("/course/{courseId}/task/{taskId}/file/delete")
+    public ResponseEntity<CommonResponse> deleteTaskFile(HttpServletRequest request,
+                                                         @PathVariable Long courseId,
+                                                         @PathVariable Long taskId) {
+        return new ResponseEntity<>(educatorService.deleteTaskFile(request, courseId, taskId), OK);
+    }
+
     @DeleteMapping("/course/{courseId}/student/{studentId}/kick")
     public ResponseEntity<CommonResponse> kickStudent(HttpServletRequest request,
                                                       @PathVariable Long courseId,
@@ -230,6 +258,14 @@ public class EducatorController {
     public ResponseEntity<CommonResponse> deleteCourse(HttpServletRequest request,
                                                        @PathVariable Long courseId) {
         return new ResponseEntity<>(educatorService.deleteCourse(request, courseId), OK);
+    }
+
+    @DeleteMapping("/course/{courseId}/task/{taskId}/file-to-check/{fileToCheckId}/delete")
+    public ResponseEntity<CommonResponse> deleteFileToCheck(HttpServletRequest request,
+                                                            @PathVariable Long courseId,
+                                                            @PathVariable Long taskId,
+                                                            @PathVariable Long fileToCheckId) {
+        return new ResponseEntity<>(educatorService.deleteFileToCheck(request, courseId, taskId, fileToCheckId), OK);
     }
 
     @PutMapping("/course/{courseId}/edit")
@@ -264,9 +300,9 @@ public class EducatorController {
 
     @PutMapping("/course/{courseId}/typical-mistake/{typicalMistakeId}/edit")
     public ResponseEntity<CommonResponse> editTypicalMistake(HttpServletRequest request,
-                                                   @PathVariable Long courseId,
-                                                   @PathVariable Long typicalMistakeId,
-                                                   @RequestBody TypicalMistake typicalMistake) {
+                                                             @PathVariable Long courseId,
+                                                             @PathVariable Long typicalMistakeId,
+                                                             @RequestBody TypicalMistake typicalMistake) {
         return new ResponseEntity<>(educatorService
                 .editTypicalMistake(request, courseId, typicalMistakeId, typicalMistake), OK);
     }
@@ -276,14 +312,14 @@ public class EducatorController {
                                              @PathVariable Long courseId,
                                              @PathVariable Long taskId,
                                              @RequestBody Object repo) throws JsonProcessingException {
-        return new ResponseEntity<>(educatorService.createRepo(request,courseId, taskId, repo), OK);
+        return new ResponseEntity<>(educatorService.createRepo(request, courseId, taskId, repo), OK);
     }
 
     @PostMapping("/course/{courseId}/task/{taskId}/file-to-check/add")
-    public ResponseEntity<FileToCheck> addFileToCheck(HttpServletRequest request,
-                                                      @PathVariable Long courseId,
-                                                      @PathVariable Long taskId,
-                                                      @RequestBody FileToCheck fileToCheck){
+    public ResponseEntity<List<FileToCheck>> addFileToCheck(HttpServletRequest request,
+                                                            @PathVariable Long courseId,
+                                                            @PathVariable Long taskId,
+                                                            @RequestBody List<FileToCheck> fileToCheck) {
         return new ResponseEntity<>(educatorService.addFileToCheck(request, courseId, taskId, fileToCheck), CREATED);
     }
 
@@ -292,17 +328,24 @@ public class EducatorController {
         return new ResponseEntity<>(educatorService.provideAccessToGithub(request), OK);
     }
 
-    @PutMapping("/github/save-access-token")
+    @PostMapping("/github/save-access-token")
     public ResponseEntity<CommonResponse> saveGithubAccessToken(HttpServletRequest request,
-                                                                @RequestBody GithubAccessToken githubAccessToken){
-        return new ResponseEntity<>(educatorService.saveAccessToken(request,githubAccessToken), OK);
+                                                                @RequestBody GithubAccessToken githubAccessToken) {
+        return new ResponseEntity<>(educatorService.saveAccessToken(request, githubAccessToken), OK);
     }
 
     @GetMapping("/course/{courseId}/student/{studentId}/task/{taskId}/check-files")
     public ResponseEntity<List<Object>> checkFilesExistence(HttpServletRequest request,
                                                             @PathVariable Long courseId,
                                                             @PathVariable Long studentId,
-                                                            @PathVariable Long taskId){
+                                                            @PathVariable Long taskId) {
         return new ResponseEntity<>(educatorService.checkFilesExistence(request, courseId, studentId, taskId), OK);
+    }
+
+    @GetMapping("/course/{courseId}/task/{taskId}/files-to-check")
+    public ResponseEntity<List<FileToCheck>> getFilesToCheck(HttpServletRequest request,
+                                                             @PathVariable Long courseId,
+                                                             @PathVariable Long taskId) {
+        return new ResponseEntity<>(educatorService.getFileToCheck(request, courseId, taskId), OK);
     }
 }

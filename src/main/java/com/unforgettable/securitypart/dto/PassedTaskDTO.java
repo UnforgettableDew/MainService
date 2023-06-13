@@ -47,6 +47,7 @@ public class PassedTaskDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer studentsCount;
 
+
     public PassedTaskDTO(PassedTask passedTask) {
         this.id = passedTask.getId();
         this.reference = passedTask.getReference();
@@ -89,6 +90,18 @@ public class PassedTaskDTO {
         this.educatorComment = educatorComment;
         this.studentComment = studentComment;
         this.submissionDate = submissionDate;
+    }
+
+    public PassedTaskDTO(Long id,
+                         String githubReference,
+                         Float point,
+                         Boolean isAssessed,
+                         String studentComment) {
+        this.id = id;
+        this.githubReference = githubReference;
+        this.point = point;
+        this.isAssessed = isAssessed;
+        this.studentComment = studentComment;
     }
 
     public PassedTaskDTO(Float point) {

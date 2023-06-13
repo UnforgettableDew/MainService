@@ -80,7 +80,7 @@ public class SecurityConfig {
 //                .authorizedClientRepository(authorizedClientRepository())
 //                .userInfoEndpoint().userService(oAuth2UserService);
 //                        .and().successHandler(successHandler());
-        httpSecurity.cors().disable();
+        httpSecurity.cors();
         return httpSecurity.build();
     }
 

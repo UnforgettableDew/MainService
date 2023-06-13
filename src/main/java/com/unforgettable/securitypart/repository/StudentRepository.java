@@ -43,19 +43,26 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     List<StudentDTO> getStudentsWhoDidntSubmitTaskOnTime(Long courseId, Long taskId);
 
     @Query("select new com.unforgettable.securitypart.dto.StudentDTO(" +
-            "s.id, s.firstname, s.lastname, s.group, s.email, s.age, s.registrationDate, s.telegramContact)" +
+            "s.id, s.firstname, s.lastname, s.group, s.email, s.birthday, s.registrationDate, s.telegramContact)" +
             " from Student s join s.courses c" +
             " where s.id=:studentId and c.id=:courseId and c.educator.id=:educatorId")
     StudentDTO findStudentByIdAndCourseId(Long studentId, Long courseId, Long educatorId);
 
     @Query("select new com.unforgettable.securitypart.dto.StudentDTO(" +
-            "s.id, s.firstname, s.lastname, s.group, s.email, s.age, s.registrationDate, s.telegramContact)" +
+            "s.id, s.firstname, s.lastname, s.group, s.email, s.birthday, s.registrationDate, s.telegramContact)" +
             " from Student s " +
             " where s.id=:studentId")
     StudentDTO findStudentProfileById(Long studentId);
 
+    @Query("select new com.unforgettable.securitypart.dto.StudentDTO(" +
+            "s.id, s.firstname, s.lastname, s.group)" +
+            " from Student s " +
+            " where s.id=:studentId")
+    StudentDTO findStudentBriefInfo(Long studentId);
+
     @Query("select s from Student s join s.courses c where c.id=:courseId")
     List<Student> findStudentsByCourseId(Long courseId);
+
 
     @Query("select count(s) from Student s join s.courses c " +
             "where c.id=:courseId")

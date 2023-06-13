@@ -21,9 +21,9 @@ values ('kostya', '$2a$10$UkK5p9u5J1Z6TVxf4NM.euQgh1ZdMn8ZlLcFptlQgqLOGO1flw.Ze'
        ('otaylor', '$2a$10$71qP7nfUwlhaKCp4G8rZ.eJkycdkwGLG63017shIqq2lKdU5uzMSO', 'STUDENT'),
        ('william', '$2a$10$71qP7nfUwlhaKCp4G8rZ.eJkycdkwGLG63017shIqq2lKdU5uzMSO', 'STUDENT');
 
-insert into educator(first_name, last_name, age, email, telegram_contact, github_access_token, user_id)
-values ('Kostyantin', 'Zhereb', 33, 'koszher@gmail.com', 'zhereb', null, 1),
-       ('Tom', 'Yorkshir', 28, 'tomyork@gmail.com', 'tomyork', null, 2);
+insert into educator(first_name, last_name, birthday, email, telegram_contact, github_access_token, user_id)
+values ('Kostyantin', 'Zhereb', '2001-12-01', 'koszher@gmail.com', 'zhereb', null, 1),
+       ('Tom', 'Yorkshir', '2002-12-02', 'tomyork@gmail.com', 'tomyork', null, 2);
 
 insert into course(title, description, educator_id, start_date, end_date)
 values ('Back-end', 'Course for Back-end developers', 1, '2023-01-08 14:30:00', '2023-03-08 14:30:00'),
@@ -68,23 +68,23 @@ values ('D:\Files\KostyantinZhereb\Back-end\Tasks\task1.docx', 'Database Fundame
         'Configure Prometheus and Grafana to monitor and visualize logs for a Dockerized application', 20, 3,
         '2023-01-23 14:30:00', '2023-01-28 14:30:00');
 
-insert into student(first_name, last_name, age, email, telegram_contact, student_group,
+insert into student(first_name, last_name, birthday, email, telegram_contact, student_group,
                     github_access_token, user_id, registration_date)
-values ('John', 'Doe', 21, 'johndoe@example.com', '@johndoe', 'Group A', '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', 3, '2023-01-08 14:30:00'),
-       ('Jane', 'Smith', 23, 'janesmith@example.com', '@janesmith', 'Group B', null, 4, '2023-05-03 14:30:00'),
-       ('Bob', 'Johnson', 20, 'bobjohnson@example.com', '@bobjohnson', 'Group A', null, 5, '2023-07-08 14:30:00'),
-       ('Alice', 'Williams', 22, 'alicewilliams@example.com', '@alicewilliams', 'Group C', null, 6, '2023-01-04 14:30:00'),
-       ('Tom', 'Brown', 21, 'tombrown@example.com', '@tombrown', 'Group B', null, 7, '2023-05-07 14:30:00'),
-       ('Samantha', 'Lee', 21, 'samantha.lee@example.com', '@samanthalee', 'Group A', null, 8, '2023-06-12 14:30:00'),
-       ('Matthew', 'Nguyen', 19, 'matthew.nguyen@example.com', '@matthewnguyen', 'Group A', null, 9, '2023-2-08 14:30:00'),
-       ('Olivia', 'Garcia', 22, 'olivia.garcia@example.com', '@oliviagarcia', 'Group A', null, 10, '2023-05-03 14:30:00'),
-       ('Ethan', 'Kim', 23, 'ethan.kim@example.com', '@ethankim', 'Group C', null, 11, '2023-04-09 14:30:00'),
-       ('Ava', 'Patel', 20, 'ava.patel@example.com', '@avapatel', 'Group B', null, 12, '2023-03-02 14:30:00'),
-       ('John', 'Smith', 20, 'john.smith@example.com', '@john_smith', 'Group A', null, 13, '2023-05-03 14:30:00'),
-       ('Emily', 'Jones', 22, 'emily.jones@example.com', '@emily_jones', 'Group B', null, 14, '2023-05-04 14:34:00'),
-       ('Michael', 'Davis', 21, 'michael.davis@example.com', '@michael_davis', 'Group A', null, 15, '2023-05-05 14:31:00'),
-       ('Olivia', 'Taylor', 19, 'olivia.taylor@example.com', '@olivia_taylor', 'Group B', null, 16, '2023-05-06 14:32:00'),
-       ('William', 'Brown', 20, 'william.brown@example.com', '@william_brown', 'Group C', null, 17, '2023-05-07 14:33:00');
+values ('John', 'Doe', '2001-10-02', 'johndoe@example.com', '@johndoe', 'Group A', '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', 3, '2023-01-08 14:30:00'),
+       ('Jane', 'Smith', '2002-02-19', 'janesmith@example.com', '@janesmith', 'Group B', null, 4, '2023-05-03 14:30:00'),
+       ('Bob', 'Johnson', '2001-02-18', 'bobjohnson@example.com', '@bobjohnson', 'Group A', null, 5, '2023-07-08 14:30:00'),
+       ('Alice', 'Williams', '2003-03-17', 'alicewilliams@example.com', '@alicewilliams', 'Group C', null, 6, '2023-01-04 14:30:00'),
+       ('Tom', 'Brown', '2000-04-15', 'tombrown@example.com', '@tombrown', 'Group B', null, 7, '2023-05-07 14:30:00'),
+       ('Samantha', 'Lee', '2001-05-30', 'samantha.lee@example.com', '@samanthalee', 'Group A', null, 8, '2023-06-12 14:30:00'),
+       ('Matthew', 'Nguyen', '2002-06-25', 'matthew.nguyen@example.com', '@matthewnguyen', 'Group A', null, 9, '2023-2-08 14:30:00'),
+       ('Olivia', 'Garcia', '2001-07-14', 'olivia.garcia@example.com', '@oliviagarcia', 'Group A', null, 10, '2023-05-03 14:30:00'),
+       ('Ethan', 'Kim', '2002-07-19', 'ethan.kim@example.com', '@ethankim', 'Group C', null, 11, '2023-04-09 14:30:00'),
+       ('Ava', 'Patel', '2001-08-15', 'ava.patel@example.com', '@avapatel', 'Group B', null, 12, '2023-03-02 14:30:00'),
+       ('John', 'Smith', '2003-09-10', 'john.smith@example.com', '@john_smith', 'Group A', null, 13, '2023-05-03 14:30:00'),
+       ('Emily', 'Jones', '2003-10-09', 'emily.jones@example.com', '@emily_jones', 'Group B', null, 14, '2023-05-04 14:34:00'),
+       ('Michael', 'Davis', '2001-11-07', 'michael.davis@example.com', '@michael_davis', 'Group A', null, 15, '2023-05-05 14:31:00'),
+       ('Olivia', 'Taylor', '2003-01-04', 'olivia.taylor@example.com', '@olivia_taylor', 'Group B', null, 16, '2023-05-06 14:32:00'),
+       ('William', 'Brown', '2002-12-03', 'william.brown@example.com', '@william_brown', 'Group C', null, 17, '2023-05-07 14:33:00');
 
 insert into passed_task(reference, github_reference, point, is_assessed, educator_comment, student_comment,
                         submission_date, student_id, task_id)
@@ -200,11 +200,11 @@ values ('typical mistake 1', 'description 1 course 1', 2, 1),
        ('typical mistake 2', 'description 2 course 3', 3, 3),
        ('typical mistake 3', 'description 3 course 3', 3, 3);
 
-insert into file_to_check(filename, task_id)
-values ('.gitignore',1),
-       ('README.md', 1),
-       ('SecurityPartApplication.java', 1),
-       ('UserEntity.java', 1);
+insert into file_to_check(filename, description, task_id)
+values ('.gitignore', 'gitignore for java',1),
+       ('README.md', 'description',1),
+       ('SecurityPartApplication.java', 'main part' ,1),
+       ('UserEntity.java', 'basic user entity',1);
 
 insert into course_student(student_id, course_id)
 values (1, 1),

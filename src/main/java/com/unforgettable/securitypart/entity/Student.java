@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -36,8 +37,8 @@ public class Student {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "age")
-    private Integer age;
+    @Column(name = "birthday")
+    private Date birthday;
 
     @Column(name = "telegram_contact")
     @JsonProperty(value = "telegram_contact")
@@ -45,6 +46,7 @@ public class Student {
 
     @Column(name = "github_access_token")
     @JsonProperty(value = "github_access_token")
+    @JsonIgnore
     private String githubAccessToken;
 
     @OneToMany(mappedBy = "student")
@@ -88,7 +90,7 @@ public class Student {
             this.group = student.getGroup();
         if (student.getTelegramContact() != null)
             this.telegramContact = student.getTelegramContact();
-        if (student.getAge() != null)
-            this.age = student.getAge();
+        if (student.getBirthday() != null)
+            this.birthday = student.getBirthday();
     }
 }

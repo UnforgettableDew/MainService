@@ -20,6 +20,8 @@ public class FileToCheck {
     private Long id;
 
     private String filename;
+    @Column(name = "description")
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "task_id")

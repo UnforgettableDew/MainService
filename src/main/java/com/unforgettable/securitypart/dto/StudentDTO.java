@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ public class StudentDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String email;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Integer age;
+    private Date birthday;
     @JsonProperty(value = "registration_date")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Timestamp registrationDate;
@@ -55,7 +56,7 @@ public class StudentDTO {
         this.lastname = student.getLastname();
         this.group = student.getGroup();
         this.email = student.getEmail();
-        this.age = student.getAge();
+        this.birthday = student.getBirthday();
         this.registrationDate = student.getRegistrationDate();
         this.telegramContact = student.getTelegramContact();
         this.courses = student.getCourses()
@@ -70,7 +71,7 @@ public class StudentDTO {
                       String lastname,
                       String group,
                       String email,
-                      Integer age,
+                      Date birthday,
                       Timestamp registrationDate,
                       String telegramContact) {
         this.id = id;
@@ -78,7 +79,7 @@ public class StudentDTO {
         this.lastname = lastname;
         this.group = group;
         this.email = email;
-        this.age = age;
+        this.birthday = birthday;
         this.registrationDate = registrationDate;
         this.telegramContact = telegramContact;
         this.passedTasks = new ArrayList<>();
